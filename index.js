@@ -56,7 +56,7 @@
 
 // app.listen(5000, () => console.log("App is up and running at port 5000"));
 
-import express from "express"; 
+import express from "express";
 import fs from "fs";
 import path from "path";
 import { nanoid } from "nanoid";
@@ -66,6 +66,7 @@ const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const resultFilePath = path.join(__dirname, "result.json");
 
 const isURLValid = (url) => {
   try {
@@ -92,22 +93,32 @@ app.post("/url-shortner", (req, res) => {
     return res.status(400).send("Invalid URL");
   }
   
-  const fileData = JSON.parse(fs.readFileSync("result.json").toString());
-  fileData[shortUrl] = longUrl;
-  fs.writeFileSync("result.json", JSON.stringify(fileData));
+  try {
+    const fileData = JSON.parse(fs.readFileSync(resultFilePath).toString());
+    fileData[shortUrl] = longUrl;
+    fs.writeFileSync(resultFilePath, JSON.stringify(fileData));
 
-  const shortenedUrl = `http://localhost:5000/${shortUrl}`;
-  res.send(`Shortened URL: <a href="${shortenedUrl}">${shortenedUrl}</a>`);
+    const shortenedUrl = `http://localhost:5000/${shortUrl}`;
+    res.send(`Shortened URL: <a href="${shortenedUrl}">${shortenedUrl}</a>`);
+  } catch (err) {
+    console.error("Error writing to result.json:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get("/:shortUrl", (req, res) => {
-  const fileData = JSON.parse(fs.readFileSync("result.json").toString());
-  const longUrl = fileData[req.params.shortUrl];
-  
-  if (longUrl) {
-    res.redirect(longUrl);
-  } else {
-    res.status(404).send("Shortened URL not found");
+  try {
+    const fileData = JSON.parse(fs.readFileSync(resultFilePath).toString());
+    const longUrl = fileData[req.params.shortUrl];
+    
+    if (longUrl) {
+      res.redirect(longUrl);
+    } else {
+      res.status(404).send("Shortened URL not found");
+    }
+  } catch (err) {
+    console.error("Error reading from result.json:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
