@@ -1,3 +1,21 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+  <form action="http://localhost:5000/shorten" method="post">
+    <label for="longUrl">Enter a long URL:</label><br>
+    <input type="url" id="longUrl" name="url" required><br>
+    <button type="submit">Shorten</button>
+  </form>
+</body>
+</html> -->
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,12 +25,14 @@
   <title>URL Shortener</title>
 </head>
 <body>
-  <h1>Want a short URL? Get it here:</h1>
-  <form action="/url-shortner" method="post">
-    <label for="longUrl">Enter a long URL:</label>
-    <input type="url" id="longUrl" name="url" required>
+  <h1>URL Shortener</h1>
+  <form id="urlForm" action="/shorten" method="post">
+    <label for="longUrl">Enter a long URL:</label><br>
+    <input type="url" id="longUrl" name="url" required><br>
     <button type="submit">Shorten URL</button>
   </form>
+
+  <div id="shortUrlContainer"></div>
 </body>
 </html>
 
